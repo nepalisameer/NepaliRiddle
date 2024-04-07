@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "NepaliRiddle",
   "resources": {
-    "hash": "sha256-1ML6sT91leG1r6illQOi8WT5/oCt+rJRCC0YAOPo34w=",
+    "hash": "sha256-bX0cO/iuXYgPZqnHIcM/x3zW0m5hfVVkjR/iF9nbA+8=",
     "jsModuleNative": {
       "dotnet.native.8.0.3.wzxwl5s97r.js": "sha256-D4sYBYmDfH/YekgYRgX959/2RG6k28sJSHmcsn+iikk="
     },
@@ -34,7 +34,7 @@
       "Microsoft.JSInterop.wasm": "sha256-LFEySM8Y7K8Po/tGNqDWegNpFEJRYBzDEHU1fNg3sD4=",
       "Microsoft.JSInterop.WebAssembly.wasm": "sha256-CQVLCKiSxLN5ghyJZG3mhnMGRROdqrbNUjtAXB0nWb8=",
       "MudBlazor.wasm": "sha256-jwF+jFN6ZDphtoexDex3xu+tv4hUw0nNcnpCUYXOtDw=",
-      "NepaliRiddle.wasm": "sha256-MZsC6Nqq+Sk5a7MbpvzHepXgBdkZQCT1k3ou+57Zx+c=",
+      "NepaliRiddle.wasm": "sha256-yU8pkTnuuaMMnJ6kE1Zpw7CcinlCXNH4kXaZpmEdCG4=",
       "System.Collections.Concurrent.wasm": "sha256-pOb9PfZ6gu3PYExZ60pfqfuCLGOYCCJJE1pb3QXPC3E=",
       "System.Collections.Immutable.wasm": "sha256-B816Wxwy+m/NpQjnOrJo8qjhBcTatYsbjDnW23G/efg=",
       "System.Collections.wasm": "sha256-qzmpXGodtxTdsyjSP/8CaX+7cB09X0P+yxvxrdZofFo=",
