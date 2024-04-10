@@ -2,46 +2,38 @@
 <MudThemeProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
+
 <MudLayout>
     <MudAppBar Elevation="1" Color="Color.Dark">
         @* <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" /> *@
         <MudSpacer />
         <MudStack Spacing="0">
-            <MudText Align="Align.Center" Color=Color.Warning Typo="Typo.h6">Gaun Khane Katha</MudText>
+            <MudText Align="Align.Center" Color=Color.Warning Typo="Typo.h6">Nepali Riddle</MudText>
             <MudText Style="margin-top:-10px;" Color=Color.Warning Align="Align.Center" Typo="Typo.subtitle1">गाँउ खाने कथा</MudText>
         </MudStack>
         <MudSpacer />
-        <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Href="https://github.com/MudBlazor/MudBlazor" Target="_blank" />
+        <MudIconButton Icon="@(muted?Icons.Material.Filled.VolumeOff:Icons.Material.Filled.VolumeUp)" Color="Color.Inherit" OnClick="@ToggleAudio" />
+        <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Href="https://github.com/nepalisameer/NepaliRiddle" Target="_blank" />
     </MudAppBar>
-@*     <MudDrawer @bind-Open="@open" Breakpoint="@breakpoint" Elevation="1" Variant="@DrawerVariant.Responsive" PreserveOpenState="@preserveOpenState">
-        <MudDrawerHeader>
-            <MudStack Spacing="0">
-                <MudText Align="Align.Center" Color=Color.Warning Typo="Typo.h6">Gaun Khane Katha</MudText>
-                <MudText Style="margin-top:-10px;" Color=Color.Warning Align="Align.Center" Typo="Typo.subtitle1">गाँउ खाने कथा</MudText>
-            </MudStack>
-        </MudDrawerHeader>
-        <MudNavMenu>
-            <MudNavLink Match="NavLinkMatch.All">Store</MudNavLink>
-            <MudNavLink Match="NavLinkMatch.All">Library</MudNavLink>
-            <MudNavLink Match="NavLinkMatch.All">Community</MudNavLink>
-        </MudNavMenu>
-    </MudDrawer> *@
-    <MudMainContent Class="pt-16 px-16">
-        <MudContainer Class="mt-6">
-          <NepaliRiddle.Pages.Home/>
+    <MudMainContent Style="background-color:lightyellow">
+        <MudContainer MaxWidth="MaxWidth.Large" Class="mt-5" Style="height: 100vh;">
+            <NepaliRiddle.Pages.Home />
         </MudContainer>
     </MudMainContent>
 </MudLayout>
 
 
 @code {
-    // bool open = false;
-    // bool preserveOpenState = false;
-    // Breakpoint breakpoint = Breakpoint.Lg;
-
-    // void ToggleDrawer()
-    // {
-    //     open = !open;
-    // }
+    bool muted = false;
+    protected async override Task OnInitializedAsync()
+    {
+        await _gameState.CheckLocalStorageAsync();
+        muted = _gameState.AudioMuted;
+    }
+    private async Task ToggleAudio()
+    {
+        muted = !muted;
+        await _gameState.MuteAudioAsync(muted);
+    }
 }
 

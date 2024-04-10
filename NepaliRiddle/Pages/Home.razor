@@ -1,4 +1,25 @@
 ﻿@page "/"
-
+@implements IDisposable
 <PageTitle>Nepali Riddles</PageTitle>
-<Question/>
+@if (_gameState.GameStarted)
+{
+    <Question />
+}
+else
+{
+   <StartPage />
+}
+
+@code {
+    protected override void OnInitialized()
+    {
+        _gameState.GameStateChanged +=  StateHasChanged;
+    }
+    bool _start =>_gameState.GameStarted;
+    string desc = @"Nepali riddles are an integral part of the cultural heritage and tradition of Nepal. These riddles are often presented in a poetic or lyrical form, designed to challenge the intellect and wit of the participants. They cover a wide range of topics including nature, everyday objects, animals, and human emotions, reflecting the diversity and richness of Nepali culture. Typically, they involve wordplay, metaphorical expressions, and clever clues that require lateral thinking and creative interpretation to solve. Nepali riddles serve not only as entertainment but also as a means of transmitting cultural values, wisdom, and folk knowledge from one generation to another.";
+    public void Dispose()
+    {
+        _gameState.GameStateChanged -= StateHasChanged;
+    }
+}
+

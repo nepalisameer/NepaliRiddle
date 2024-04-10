@@ -9,3 +9,10 @@
 @using NepaliRiddle
 @using NepaliRiddle.Layout
 @using MudBlazor
+@using Blazored.LocalStorage
+@using NepaliRiddle.Constants
+@using NepaliRiddle.States
+@inject ILocalStorageService LocalStorage
+@inject GameStateManager _gameState
+@inject CountDownState _countDownState
+@inject QuestionsHolder _questionsHolder

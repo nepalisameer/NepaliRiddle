@@ -1,0 +1,18 @@
+﻿
+<MudCard>
+    <MudCardContent>
+            <MudText Align="Align.Center"> Lets see how much you know about nepali riddles(गाँउ खाने कथा) </MudText>
+    <MudStack AlignItems="AlignItems.Center">
+
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="()=>StartGame()">Start</MudButton>
+    </MudStack>
+    </MudCardContent>
+</MudCard>
+
+
+@code {
+    private void StartGame()
+    {
+        _gameState.StartGame();
+    }
+}

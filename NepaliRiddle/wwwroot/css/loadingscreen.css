@@ -1,0 +1,30 @@
+﻿@keyframes slide {
+    0% {
+        transform: translateX(-25%);
+    }
+
+    100% {
+        transform: translateX(25%);
+    }
+}
+
+.mud-wasm {
+    animation: slide 3s ease-in-out infinite alternate;
+    background-image: radial-gradient(circle, rgba(110,109,100,1) 12%, rgba(138,238,240,1) 28%, rgba(48,71,71,1) 38%, rgba(34,193,195,1) 50%, rgba(80,71,63,0.991275733926383) 50%, rgba(133,102,72,0.991275733926383) 64%, rgba(128,100,73,0.991275733926383) 81%);
+    bottom: 0;
+    left: -50%;
+    opacity: .5;
+    position: fixed;
+    right: -50%;
+    top: 0;
+    z-index: -1
+}
+
+.mud-wasm-cont {
+    left: 50%;
+    padding: 10vmin;
+    position: fixed;
+    text-align: center;
+    top: 40%;
+    transform: translate(-50%,-50%)
+}
