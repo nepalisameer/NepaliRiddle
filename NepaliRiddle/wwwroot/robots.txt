@@ -1,0 +1,3 @@
+User-agent: *
+Disallow:
+Sitemap: https://nepaliriddle.tweakgame.com/sitemap.xml
