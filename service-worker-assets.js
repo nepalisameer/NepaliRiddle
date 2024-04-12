@@ -65,6 +65,14 @@
       "url": "nepaliriddlelogo.png"
     },
     {
+      "hash": "sha256-ATZgmgoGBM7JSaI6ywH6lZSlk\/h11X0UEEuKOm3\/G7E=",
+      "url": "robots.txt"
+    },
+    {
+      "hash": "sha256-NQI9X6W8PGgU8gWi62o3mzT67cb1WrdAqrrLHX7lKfU=",
+      "url": "sitemap.xml"
+    },
+    {
       "hash": "sha256-mE8Be9G0ZI2N1LgqEMgSQJo+BpA+IGTqz5SWOB+omtc=",
       "url": "sounds\/correctanswer.mp3"
     },
@@ -113,7 +121,7 @@
       "url": "_framework\/icudt_no_CJK.dat"
     },
     {
-      "hash": "sha256-w32wumBahOoucCukq+TZIMlvPcat8FuEeX3WDEnk12s=",
+      "hash": "sha256-tz\/CBlvD7KzjQ3xGFkz3VIju12uB8tTo6cQKc904Qnk=",
       "url": "_framework\/blazor.boot.json"
     },
     {
@@ -193,7 +201,7 @@
       "url": "_framework\/MudBlazor.wasm"
     },
     {
-      "hash": "sha256-4vjjjZpyBZQqcGdqVok6zc9\/lWcPWmVt0j2Os8gIhnc=",
+      "hash": "sha256-rHTyCFdiCQB8zI+BsGpq\/gFJ7sI2JF3RvMrmjJIv9wI=",
       "url": "_framework\/NepaliRiddle.wasm"
     },
     {
@@ -313,5 +321,5 @@
       "url": "_content\/MudBlazor\/MudBlazor.min.js"
     }
   ],
-  "version": "4rwqwtoB"
+  "version": "6flrQ7bp"
 };
