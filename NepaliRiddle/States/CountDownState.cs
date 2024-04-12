@@ -4,9 +4,7 @@
     {
         System.Timers.Timer? _timer;
         public int CurrentCountDown { get; private set; }
-        private int _countDown;
-        public string CurrentCountDownText => $"{TimeSpan.FromSeconds(CurrentCountDown):mm\\:ss}";
-        public event Action? CountDownFinished;
+        public event Func<Task>? CountDownFinished;
         public event Action? OnValueChanged;
 
         public void Dispose()
@@ -20,9 +18,13 @@
 
         public void StartCountDown(int timeOutInSec = 20)
         {
-            _countDown = timeOutInSec;
             CurrentCountDown = timeOutInSec;
-            _timer?.Dispose();
+            if (_timer != null)
+            {
+                _timer.Elapsed -= _timer_Elapsed;
+                _timer.Dispose();
+
+            }
             _timer = new System.Timers.Timer(1000)
             {
                 AutoReset = true
@@ -30,13 +32,21 @@
             _timer.Elapsed += _timer_Elapsed;
             _timer.Start();
         }
-        public void ResetCountDown()
+        public void StopCountDown(bool setCountdownToZero = true)
         {
-            _timer?.Stop();
-            CurrentCountDown = _countDown;
-            _timer?.Start();
-            OnValueChanged?.Invoke();
-
+            if (_timer != null && _timer.Enabled)
+            {
+                _timer?.Stop();
+            }
+            if (setCountdownToZero)
+            {
+                CurrentCountDown = 0;
+            }
+        }
+        public void StopCountDown(int chageCountdownTo)
+        {
+            StopCountDown(false);
+            CurrentCountDown = chageCountdownTo;
         }
         private void _timer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
         {

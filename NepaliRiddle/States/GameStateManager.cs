@@ -9,13 +9,8 @@ namespace NepaliRiddle.States
         public event Action? GameStateChanged;
         public bool GameStarted { get; private set; }
         public bool AudioMuted { get; private set; }
-        private List<string> _duckImages  =
-        [
-            "/images/duck1.jpeg",
-            "/images/duck2.jpeg",
-            "/images/duck3.jpeg",
-        ];
-        public string GetRandomDuckImage => _duckImages[Random.Shared.Next(_duckImages.Count)];
+        public bool GoToNextQuestionAuto { get; set; } = true;
+
         public bool AllowMultipleSlection { get; set; }
         private readonly ILocalStorageService _localStorage;
         public GameStateManager(ILocalStorageService localStorage)
@@ -46,5 +41,6 @@ namespace NepaliRiddle.States
                 await _localStorage.SetItemAsync(LocalStorageConstant.AudioState, AudioMuted);
             }
         }
+       
     }
 }

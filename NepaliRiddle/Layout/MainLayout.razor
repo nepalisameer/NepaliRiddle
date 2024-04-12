@@ -4,9 +4,8 @@
 <MudSnackbarProvider />
 
 <MudLayout>
-    <MudAppBar Elevation="1" Color="Color.Dark">
+    <MudAppBar Elevation="1" Style="background-color:#31363F;">
         @* <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" /> *@
-        <MudSpacer />
         <MudStack Spacing="0">
             <MudText Align="Align.Center" Color=Color.Warning Typo="Typo.h6">Nepali Riddle</MudText>
             <MudText Style="margin-top:-10px;" Color=Color.Warning Align="Align.Center" Typo="Typo.subtitle1">गाँउ खाने कथा</MudText>
@@ -15,9 +14,9 @@
         <MudIconButton Icon="@(muted?Icons.Material.Filled.VolumeOff:Icons.Material.Filled.VolumeUp)" Color="Color.Inherit" OnClick="@ToggleAudio" />
         <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Href="https://github.com/nepalisameer/NepaliRiddle" Target="_blank" />
     </MudAppBar>
-    <MudMainContent Style="background-color:lightyellow">
+    <MudMainContent Style="background-color:#222831">
         <MudContainer MaxWidth="MaxWidth.Large" Class="mt-5" Style="height: 100vh;">
-            <NepaliRiddle.Pages.Home />
+           @Body
         </MudContainer>
     </MudMainContent>
 </MudLayout>

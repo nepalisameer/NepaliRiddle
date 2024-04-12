@@ -1,79 +1,164 @@
-﻿@using NepaliRiddle.Models
+﻿@page "/questions"
+@using NepaliRiddle.Models
 @inject IJSRuntime JSRuntime
 @inject HttpClient Http
 @implements IDisposable
-@if (_currentQuestion != null)
+@inject IDialogService DialogService
+
+<NavigationLock ConfirmExternalNavigation=true OnBeforeInternalNavigation="OnBeforeInternalNavigation"></NavigationLock>
+<MudDialog DefaultFocus="DefaultFocus.LastChild" @bind-IsVisible="_showDialog" Options="dialogOptions">
+    <DialogContent>
+        <MudText Typo="Typo.h6" Color="Color.Dark">Continue from last played question ?</MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Style="@_defaultRadius" Variant="Variant.Filled" Color="Color.Dark" OnClick="()=>OnDialogConfirm(false)">No</MudButton>
+        <MudButton Style="@_defaultRadius" Variant="Variant.Filled" Color="Color.Success" OnClick="()=>OnDialogConfirm(true)">Yes</MudButton>
+    </DialogActions>
+</MudDialog>
+@if (!_showDialog)
 {
-    <MudCard Style="border-radius:5%">
-        <MudCardContent>
-            <MudStack Justify="Justify.SpaceBetween" Row=true>
-                <MudChip Color="Color.Secondary" Variant=Variant.Outlined Icon="@Icons.Material.Outlined.QuestionAnswer" Size=Size.Large Text="@($"Question {_currentQuestionId}")"></MudChip>
-                <MudChip Color="Color.Secondary" Variant=Variant.Outlined Icon="@Icons.Material.Outlined.Timer" Size=Size.Large>
-                    <MudText Typo="Typo.h6" Align="Align.Center">@(_countDownState.CurrentCountDownText)</MudText>
-                </MudChip>
-            </MudStack>
-            <div class="d-flex justify-center">
-                <MudImage ObjectFit="ObjectFit.ScaleDown" Height="350" Src="@_duckImagepath" Alt="Örebro Slott" Elevation="25" Class="rounded-lg" />
-            </div>
-            <MudText Class="mt-4" Typo="Typo.h5" Color="Color.Secondary" Align="Align.Center">@_currentQuestion.Question</MudText>
-            </MudCardContent>
-            <MudCardActions>
-                <MudGrid Class="mt-4">
-                    @foreach (var option in _currentQuestion.Options)
+    @if (_currentQuestion != null)
+    {
+        <MudCard Style="@(_defaultRadius +"background-color:#31363F;")">
+            <MudCardContent>
+                <MudStack Justify="Justify.SpaceBetween" Row=true>
+                    <MudChip Color="Color.Secondary" Variant=Variant.Outlined Icon="@Icons.Material.Outlined.QuestionAnswer" Size=Size.Large Text="@($"Question {_currentQuestionId}")"></MudChip>
+                    <MudStack Spacing="0">
+                        <MudText Style="margin-right: 5px;" Align=Align.End Color="Color.Tertiary">@($"Total :- {_totalPlayedQuestions}")</MudText>
+                        <MudText Style="margin-right: 5px;" Align=Align.End Color="Color.Tertiary">@($"Correct :- {_totalCorrectAnswers}")</MudText>
+                        <MudCheckBox Dense="true" Color="Color.Tertiary" LabelPosition="LabelPosition.Start" ReadOnly="_showNextQuestionTimer" @bind-Value="_gameState.GoToNextQuestionAuto">
+                            <MudText Style="margin-right: 5px;" Align=Align.End Color="Color.Tertiary">Auto Next</MudText>
+                        </MudCheckBox>
+                    </MudStack>
+                </MudStack>
+                <div class="d-flex justify-center">
+                    <MudImage ObjectFit="ObjectFit.ScaleDown" Height="350" Src="@_duckImagepath" Alt="Örebro Slott" Elevation="25" Class="rounded-lg mt-3" />
+                </div>
+                <MudText Class="mt-4" Typo="Typo.h5" Color="Color.Secondary" Align="Align.Center">@_currentQuestion.Question</MudText>
+                </MudCardContent>
+                <MudCardActions>
+                    <MudGrid Class="mt-4">
+                        @foreach (var option in _currentQuestion.Options)
+                    {
+
+                        <MudItem Class="d-flex justify-center mt-4" xs="12" sm="12" md="6">
+                            <MudChip Style="@(_defaultRadius+"color:#FAFAFA;")" Icon="@Icons.Material.Filled.Token" Label=true Text="@($"{ _currentQuestion.Options.IndexOf(option) +1}.")"></MudChip>
+
+                            <MudButton Style="@_defaultRadius" Disabled="_disableButton" FullWidth=_optionButtonUseFullwidth Variant="_optionButtonVariant" IconSize="Size.Large"
+                                       EndIcon="@(SetIcon(option))" OnClick="()=>OnAnswerSelected(option)" Color="@(GetColor(option) )">
+                                <MudText Typo="_optionTypo">
+                                    @option
+                                </MudText>
+                            </MudButton>
+                        </MudItem>
+                    }
+                </MudGrid>
+
+            </MudCardActions>
+            <MudStack Class="mt-5 px-1 pb-1" Justify="Justify.SpaceBetween" Row=true>
+                <MudButton Style="@_defaultRadius" Disabled="!_disableNextPreviousButton" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.West" Color="Color.Primary" OnClick="()=>OnPreviousQuestion()">
+                    <MudText Typo="_optionTypo">
+                        Previous
+                    </MudText>
+                </MudButton>
+                @if (_showNextQuestionTimer && _gameState.GoToNextQuestionAuto)
                 {
-
-                    <MudItem Class="d-flex justify-center mt-4" xs="12" sm="12" md="6">
-                        <MudChip Icon="@Icons.Material.Filled.Token" Label=true Text="@($"{ _currentQuestion.Options.IndexOf(option) +1}.")"></MudChip>
-
-                        <MudButton Disabled="_disableButton" FullWidth=_optionButtonUseFullwidth Variant="_optionButtonVariant" IconSize="Size.Large"
-                                   EndIcon="@(SetIcon(option))" OnClick="()=>OnAnswerSelected(option)" Color="@(GetColor(option) )">
-                            <MudText Typo="_optionTypo">
-                                @option
-                            </MudText>
-                        </MudButton>
-                    </MudItem>
+                    <MudText Align="Align.Center" Typo="Typo.h6" Color="Color.Warning">Next Question in @(_countDownState.CurrentCountDown.ToString())</MudText>
                 }
-            </MudGrid>
+                <MudButton Style="@_defaultRadius" Disabled="!_disableNextPreviousButton" Variant="Variant.Text" EndIcon="@Icons.Material.Filled.East" Color="Color.Primary" OnClick="()=>OnNextQuestion()">
+                    <MudText Typo="_optionTypo">
+                        Next
+                    </MudText>
+                </MudButton>
+            </MudStack>
 
-        </MudCardActions>
-        <MudStack Class="mt-5" Justify="Justify.SpaceBetween" Row=true>
-            <MudButton Disabled="!_disableNextPreviousButton" Variant="Variant.Text" StartIcon="@Icons.Material.Filled.West" Color="Color.Primary" OnClick="()=>OnPreviousQuestion()">
-                <MudText Typo="_optionTypo">
-                    Previous
-                </MudText>
-            </MudButton>
-            <MudButton Disabled="!_disableNextPreviousButton" Variant="Variant.Text" EndIcon="@Icons.Material.Filled.East" Color="Color.Primary" OnClick="()=>OnNextQuestion()">
-                <MudText Typo="_optionTypo">
-                    Next
-                </MudText>
-            </MudButton>
-        </MudStack>
-    </MudCard>
+        </MudCard>
 
-}
-else
-{
-    <div style="position:fixed;top:20%;left:50%;">
-        <MudProgressCircular Color="Color.Secondary" Size="Size.Large" Indeterminate="true" />
-    </div>
+    }
+    else
+    {
+        <div style="position:fixed;top:20%;left:50%;">
+            <MudProgressCircular Color="Color.Secondary" Size="Size.Large" Indeterminate="true" />
+        </div>
+    }
 }
 @code {
-    private string _duckImagepath = "/images/duck1.jpeg";
+    private DotNetObjectReference<Question>? dotNetHelper;
     private QuestionBank? _currentQuestion;
+
+    private string _defaultRadius = "border-radius:20px;";
+    private string _duckImagepath = "/images/duck1.jpeg";
     Color _optionButtonColor = Color.Dark;
     Variant _optionButtonVariant = Variant.Filled;
     bool _optionButtonUseFullwidth = true;
     Typo _optionTypo = Typo.h6;
-    private int _counter = 0;
-    private bool _disableButton = false;
     private bool _disableNextPreviousButton => _currentQuestion == null || _currentQuestion.AnswerSelected || _currentQuestion.CorrectAnswerSelected;
+
+    private bool _disableButton = false;
     private int _currentQuestionId = 1;
+    private int _totalCorrectAnswers = 0;
+    private int _totalPlayedQuestions = 0;
+    private bool _showNextQuestionTimer = false;
+    #region Dialog Region
+    bool _showDialog = false;
+    private DialogOptions dialogOptions = new() { FullWidth = false, MaxWidth = MaxWidth.Large, CloseOnEscapeKey = false, NoHeader = true, DisableBackdropClick = true };
+    private async Task OnDialogConfirm(bool isYes)
+    {
+        if (isYes)
+        {
+            var data = await _dataHolder.LoadData();
+            if (data == null || data.Questions == null)
+            {
+                await _dataHolder.LoadAndSuffleQuestions();
+            }
+            else
+            {
+                _currentQuestionId = data.TotalPlayedQuestions;
+                _totalCorrectAnswers = data.TotalCorrectAnswers;
+                _totalPlayedQuestions = data.TotalPlayedQuestions;
+                _currentQuestion = _dataHolder.Questions[_currentQuestionId - 1];
+            }
+        }
+        else
+        {
+            await SetInitialValues();
+        }
+        _showDialog = false;
+    }
+    #endregion
     protected async override Task OnInitializedAsync()
     {
-        await _questionsHolder.LoadAndSuffleQuestions();
-        _countDownState.StartCountDown();
+
+        if (await _dataHolder.IsSavedDataAvailable())
+        {
+            _showDialog = true;
+
+        }
+        else
+        {
+            await SetInitialValues();
+            _showDialog = false;
+        }
         _countDownState.OnValueChanged += StateHasChanged;
-        _currentQuestion = _questionsHolder.Questions.FirstOrDefault();
+        _countDownState.CountDownFinished += OnCountDownFinished;
+    }
+    private async Task SetInitialValues()
+    {
+        await _dataHolder.LoadAndSuffleQuestions();
+        _currentQuestion = _dataHolder.Questions[_currentQuestionId - 1];
+    }
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            dotNetHelper = DotNetObjectReference.Create(this);
+            await JSRuntime.InvokeVoidAsync("suscribeUnloadEvent", dotNetHelper);
+        }
+    }
+    [JSInvokable("UnloadEventFired")]
+    public async Task UnloadEventFired()
+    {
+        await Save();
     }
     private async Task OnAnswerSelected(string answer)
     {
@@ -82,9 +167,11 @@ else
             return;
         }
         _currentQuestion.SelectedOption = answer;
+        _totalPlayedQuestions += 1;
         if (_currentQuestion.Answer == answer)
         {
             _currentQuestion.CorrectAnswerSelected = true;
+            _totalCorrectAnswers += 1;
         }
         else
         {
@@ -101,6 +188,11 @@ else
             {
                 await JSRuntime.InvokeVoidAsync("PlayAudioFile", "/sounds/wronganswer.mp3");
             }
+        }
+        if (_gameState.GoToNextQuestionAuto)
+        {
+            _countDownState.StartCountDown(3);
+            _showNextQuestionTimer = true;
         }
     }
     private Color GetColor(string option)
@@ -141,35 +233,79 @@ else
     }
     private async Task OnNextQuestion()
     {
-        if (_currentQuestionId < _questionsHolder.TotalQuestions)
+       
+        if (_showNextQuestionTimer)
+        {
+            _showNextQuestionTimer = false;
+            _countDownState.StopCountDown();
+        }
+        if (_currentQuestionId < _dataHolder.TotalQuestions)
         {
             if (!_gameState.AudioMuted)
             {
                 await JSRuntime.InvokeVoidAsync("PlayAudioFile", "/sounds/swipe.mp3");
             }
             _currentQuestionId += 1;
-            _duckImagepath = _gameState.GetRandomDuckImage;
-            _currentQuestion = _questionsHolder.Questions[_currentQuestionId - 1];
-            _countDownState.ResetCountDown();
+            _duckImagepath = _dataHolder.GetRandomDuckImage;
+            _currentQuestion = _dataHolder.Questions[_currentQuestionId - 1];
+        }
+        else
+        {
+            _snackbar.Clear();
+            _snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+            _snackbar.Configuration.SnackbarVariant = Variant.Filled;
+            _snackbar.Configuration.ShowTransitionDuration = 0;
+            _snackbar.Configuration.PreventDuplicates = true;
+            _snackbar.Configuration.ShowTransitionDuration = 0;
+            _snackbar.Configuration.ShowCloseIcon = false;
+            _snackbar.Configuration.ClearAfterNavigation = true;
+            _snackbar.Configuration.VisibleStateDuration = 2000;
+            _snackbar.Add("You have reached the end of the questions!.", Severity.Warning);
         }
 
     }
     private async Task OnPreviousQuestion()
     {
-        if (_currentQuestionId <= _questionsHolder.TotalQuestions && _currentQuestionId > 1)
+        if (_showNextQuestionTimer)
         {
+            _showNextQuestionTimer = false;
+            _countDownState.StopCountDown();
+        }
+        if (_currentQuestionId <= _dataHolder.TotalQuestions && _currentQuestionId > 1)
+        {
+
             if (!_gameState.AudioMuted)
             {
                 await JSRuntime.InvokeVoidAsync("PlayAudioFile", "/sounds/swipe.mp3");
             }
             _currentQuestionId -= 1;
-            _currentQuestion = _questionsHolder.Questions[_currentQuestionId - 1];
-            _countDownState.ResetCountDown();
+            _currentQuestion = _dataHolder.Questions[_currentQuestionId - 1];
         }
 
+    }
+    private async Task OnCountDownFinished()
+    {
+        _showNextQuestionTimer = false;
+        await OnNextQuestion();
+        StateHasChanged();
     }
     public void Dispose()
     {
         _countDownState.OnValueChanged -= StateHasChanged;
+        _countDownState.CountDownFinished -= OnCountDownFinished;
+        dotNetHelper?.Dispose();
+    }
+    private async Task OnBeforeInternalNavigation(LocationChangingContext context)
+    {
+        await Save();
+    }
+    public async Task Save()
+    {
+        await _dataHolder.SaveData(new QuestionDataHolder
+            {
+                Questions = _dataHolder.Questions,
+                TotalCorrectAnswers = _totalCorrectAnswers,
+                TotalPlayedQuestions = _totalPlayedQuestions
+            });
     }
 }
